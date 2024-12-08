@@ -70,26 +70,6 @@ void send_packet(int socket, struct sockaddr_in *addr, char *packet)
   }
 }
 
-int wait_for_network_data(int socket)
-{
-  fd_set read_fds; // file descriptor list
-
-  FD_ZERO(&read_fds);
-  FD_SET(socket, &read_fds);
-
-  struct timeval tv;
-  tv.tv_sec = 0;
-  tv.tv_usec = 100 * 1000; // 100 milli sec wait
-
-  int retval = select(socket + 1, &read_fds, NULL, NULL, &tv);
-  if (retval == -1)
-  {
-    perror("select");
-    exit(1);
-  }
-
-  return retval;
-}
 
 uint8_t convert_packet_tag_to_id(char *packet_tag)
 {

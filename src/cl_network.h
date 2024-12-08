@@ -11,5 +11,6 @@ void cl_conn_to_server(struct player *p);
 void cl_handle_conn_packet(struct player *p, char *packet);
 struct player *cl_parse_connection_packet(char *packet);
 void cl_handle_position_packet(struct player *p, char *packet);
+int setnonblocking(int sockfd);
 
 #endif

@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   game_state.background = SDL_LoadBMP("assets/background.bmp");
   ttf_init("assets/THWACK.TTF");
 
-  player = create_new_player("", &game_state);
+  player = create_new_player("test", &game_state);
   game_state.player = player;
 
   cl_init_conn_to_server(player, 8888);
@@ -35,10 +35,10 @@ int main(int argc, char **argv)
   while (game_state.game_running)
   {
 
-    if (game_state.page == STARTUP_SCREEN_PAGE)
-    {
-      cl_startup_menu_draw(&game_state, player);
-    }
+    // if (game_state.page == STARTUP_SCREEN_PAGE)
+    // {
+    //   cl_startup_menu_draw(&game_state, player);
+    // }
 
     if (game_state.page == GAME_PAGE)
     {
@@ -71,12 +71,16 @@ void on_change_player(int x, int y, int dimension, char *key)
 {
   if (game_state.page == GAME_PAGE)
   {
+
+    player->prev_x_coord = player->x_coord;
+    player->prev_y_coord = player->y_coord;
+
     player->x_coord += x;
     player->y_coord += y;
   }
 
-  if (game_state.page == STARTUP_SCREEN_PAGE)
-  {
-    cl_startup_menu_keyboard_handler(&game_state, player, x, y, dimension, key);
-  }
+  // if (game_state.page == STARTUP_SCREEN_PAGE)
+  // {
+  //   cl_startup_menu_keyboard_handler(&game_state, player, x, y, dimension, key);
+  // }
 }

@@ -35,7 +35,9 @@ struct player *create_new_player(char *username, struct game_state *game_state_p
   new_player->game_state = game_state_ptr;
 
   uuid_generate_time_safe(new_player->uuid);
-  set_player_username(new_player, username);
+
+  // set_player_username(new_player, username);
+
 
   new_player->x_coord = 0;
   new_player->y_coord = 0;
@@ -50,6 +52,10 @@ struct player *create_new_player(char *username, struct game_state *game_state_p
 
   // uuid_generate_time_safe(game_object->uuid);
   uuid_unparse_lower(game_object->uuid, uuid_str);
+
+  set_player_username(new_player, uuid_str);
+  SDL_WM_SetCaption(uuid_str, NULL);
+
   printf("\n\ncreate_new_player:uuid = %s\n", uuid_str);
 
   game_object->rect.h = 100;
@@ -60,6 +66,7 @@ struct player *create_new_player(char *username, struct game_state *game_state_p
   game_object->surface = SDL_CreateRGBSurface(0, 100, 100, 32, 0, 0, 0, 0);
   game_object->name = malloc(strlen(username) + 1); // dont forget '\0' char
   strcpy(game_object->name, username);
+
 
   SDL_FillRect(
       game_object->surface,

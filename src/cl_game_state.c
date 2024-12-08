@@ -54,11 +54,13 @@ Uint32 time_left(Uint32 next_time)
 
 void cl_startup_menu_init(struct game_state *game_state)
 {
-  game_state->page = STARTUP_SCREEN_PAGE;
-  game_state->current_menu = LOGIN_MENU_ITEM;
+  game_state->page = GAME_PAGE;
 
-  game_state->startup_menu = SDL_LoadBMP("assets/startup_menu.bmp");
-  game_state->underscore = SDL_LoadBMP("assets/underscore.bmp");
+  // game_state->page = STARTUP_SCREEN_PAGE;
+  // game_state->current_menu = LOGIN_MENU_ITEM;
+
+  // game_state->startup_menu = SDL_LoadBMP("assets/startup_menu.bmp");
+  // game_state->underscore = SDL_LoadBMP("assets/underscore.bmp");
 }
 
 void cl_startup_menu_draw(struct game_state *game_state, struct player *player)

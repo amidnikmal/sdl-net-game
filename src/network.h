@@ -65,7 +65,6 @@ char *build_conn_packet(struct player *p);
 char *build_position_packet(struct player *p);
 
 //////////// Utils
-int wait_for_network_data(int socket);
 uint8_t convert_packet_tag_to_id(char *packet_tag);
 char *convert_packet_id_to_tag(uint8_t packet_id);
 void print_addr_info(struct sockaddr_in *addr);

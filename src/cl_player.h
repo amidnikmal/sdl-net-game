@@ -21,6 +21,9 @@ struct player
   int16_t x_coord;
   int16_t y_coord;
 
+  int16_t prev_x_coord;
+  int16_t prev_y_coord;
+
   uint8_t dimension;
 
   ///////////////////////////////////////
@@ -32,7 +35,7 @@ struct player
   //                                   //
   ///////////////////////////////////////
 
-  // State
+  // State  
   uint8_t life;
 
   // Network

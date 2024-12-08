@@ -5,10 +5,16 @@
 #include "network.h"
 #include "serv_state.h"
 #include "serv_network.h"
+#include <sys/epoll.h>
 
+#define MAX_EVENTS 10
 #define PORT 8888
 
 struct serv_state serv_state;
+int epollfd;
+int nfds;
+
+struct epoll_event ev, events[MAX_EVENTS];
 
 int main(int argc, char **argv)
 {
@@ -38,10 +44,7 @@ int main(int argc, char **argv)
     `sockaddr_in` - can be easily converted to sockaddr and vice versa.
   */
 
-  /*
-  AF_INET - Interent
-  SOCK_DGRAM - Using UDP Protocol
-*/
+  /* AF_INET - Interent SOCK_DGRAM - Using UDP Protocol */
 
   if ((serv_state.socket = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
   {
@@ -61,11 +64,44 @@ int main(int argc, char **argv)
     exit(2);
   }
 
+
+
+  epollfd = epoll_create1(0);
+  if (epollfd == -1) {  
+    perror("epoll_create1");
+    exit(EXIT_FAILURE);
+  }
+
+
+
+
+  ev.events = EPOLLIN;
+  ev.data.fd = serv_state.socket;
+  if (epoll_ctl(epollfd, EPOLL_CTL_ADD, serv_state.socket, &ev) == -1) {
+    perror("epoll_ctl: listen_sock");
+    exit(EXIT_FAILURE);
+  }
+
+
+
   char buf[PACKET_SIZE];
+
+
+
 
   while (1)
   {
-    struct sockaddr_in cliaddr; // TODO: take attention. For wthat we need serv_state.servaddr ?
+
+
+    // nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
+    // if (nfds == -1) {
+    //   perror("epoll_wait");
+    //   exit(EXIT_FAILURE);
+    // }
+
+
+
+    struct sockaddr_in cliaddr;
 
     ssize_t received = recvfrom(serv_state.socket, buf, PACKET_SIZE, 0, (struct sockaddr *)&cliaddr, &size);
 
@@ -75,7 +111,7 @@ int main(int argc, char **argv)
       exit(4);
     }
 
-    // print_addr_info(&cliaddr);
+    print_addr_info(&cliaddr);
 
     serv_parse_packet(&serv_state, buf, &cliaddr);
   }

@@ -98,14 +98,14 @@ void serv_handle_connection_packet(struct serv_state **serv_state, char *packet,
 
   (*count)++;
 
-  print_uuid(new_player->uuid, ">>> New player has connected:");
-  printf(">>> New player has connected: %s\n", new_player->username);
+  // print_uuid(new_player->uuid, ">>> New player has connected:");
+  // printf(">>> New player has connected: %s\n", new_player->username);
 
   // broadcast to all players, that has already connected
   for (int i = 0; i < *count; i++)
   {
     struct player p = serv_state_ptr->players[i];
-    print_uuid(p.uuid, "broadcast:conn:packet:>>>>>>>>>>>");
+    // print_uuid(p.uuid, "broadcast:conn:packet:>>>>>>>>>>>");
     send_packet(serv_state_ptr->socket, p.cliaddr, packet);
   }
 }

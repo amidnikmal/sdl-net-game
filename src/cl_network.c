@@ -1,5 +1,15 @@
 
 #include "cl_network.h"
+#include <fcntl.h>
+
+int setnonblocking(int sockfd)
+{
+	if (fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL, 0) | O_NONBLOCK) ==
+	    -1) {
+		return -1;
+	}
+	return 0;
+}
 
 struct player *cl_parse_connection_packet(char *packet)
 {
@@ -29,41 +39,40 @@ struct player *cl_parse_connection_packet(char *packet)
 
 void cl_read_packets(struct player *p)
 {
-  // struct game_state *game_state = p->game_state;
-  int retval = wait_for_network_data(p->cl_socket);
 
-  if (retval > 0)
-  {
-    char buf[1024];
+  char buf[1024];
 
-    socklen_t server_addr_size = sizeof(struct sockaddr_in);
+  // socklen_t server_addr_size = sizeof(struct sockaddr_in);
 
-    struct sockaddr_in *servaddr_in = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in));
-    memcpy(servaddr_in, p->servaddr, sizeof(struct sockaddr_in));
-    struct sockaddr *servaddr = (struct sockaddr *)servaddr_in;
+  // struct sockaddr_in *servaddr_in = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in));
+  // memcpy(servaddr_in, p->servaddr, sizeof(struct sockaddr_in));
+  // struct sockaddr *servaddr = (struct sockaddr *)servaddr_in;
 
-    recvfrom(
-        p->cl_socket,
-        buf,
-        PACKET_SIZE,
-        0,
-        servaddr,
-        &server_addr_size);
+  // recvfrom(
+  //     p->cl_socket,
+  //     buf,
+  //     PACKET_SIZE,
+  //     0,
+  //     servaddr,
+  //     &server_addr_size);
 
-    char *header = (char *)malloc(PACKET_HEADER_SIZE);
-    memcpy(header, buf, PACKET_HEADER_SIZE);
+   recv(
+      p->cl_socket,
+      buf,
+      PACKET_SIZE,
+      0);
 
-    if (strcmp(header, CONNECT_PACKET_TAG) == 0)
-    {
-      cl_handle_conn_packet(p, buf);
-      return;
-    }
+  char *header = (char *)malloc(PACKET_HEADER_SIZE);
+  memcpy(header, buf, PACKET_HEADER_SIZE);
 
-    if (strcmp(header, POSITION_PACKET_TAG) == 0)
-    {
-      cl_handle_position_packet(p, buf);
-    }
+  if (strcmp(header, CONNECT_PACKET_TAG) == 0) {
+    cl_handle_conn_packet(p, buf);
+    return;
   }
+
+  if (strcmp(header, POSITION_PACKET_TAG) == 0) {
+    cl_handle_position_packet(p, buf);
+  } 
 }
 
 void cl_handle_conn_packet(struct player *p, char *packet)
@@ -136,6 +145,8 @@ void cl_init_conn_to_server(struct player *p, int server_port)
 
   p->cl_socket = s;
 
+  setnonblocking(p->cl_socket);
+
   p->servaddr = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in));
 
   memset(p->servaddr, 0, sizeof(struct sockaddr_in));
@@ -159,6 +170,15 @@ void cl_conn_to_server(struct player *p)
 
 void cl_send_packets(struct player *p)
 {
-  char *packet = build_position_packet(p);
-  send_packet(p->cl_socket, p->servaddr, packet);
+  if ((p->prev_x_coord - p->x_coord != 0) || (p->prev_y_coord - p->y_coord != 0)) {  
+
+    printf("pos:%d\n", p->prev_x_coord);
+    printf("new pos:%d\n", p->x_coord);
+    printf("cmp %s\n",(p->prev_x_coord - p->x_coord != 0) ? "true" : "false" );
+
+    p->prev_x_coord = p->x_coord;
+    p->prev_y_coord = p->y_coord;
+    char *packet = build_position_packet(p);
+    send_packet(p->cl_socket, p->servaddr, packet);
+  }
 }
