@@ -30,7 +30,7 @@ int write_text(SDL_Surface *dst, const char *str, int x, int y, int r, int g, in
 {
   SDL_Surface *text;
   SDL_Rect fontRect;
-  SDL_Color text_color = {255, 255, 255};
+  SDL_Color text_color = {r, g, b};
 
   text = TTF_RenderUTF8_Blended(font, str, text_color);
 
@@ -42,10 +42,6 @@ int write_text(SDL_Surface *dst, const char *str, int x, int y, int r, int g, in
 
   fontRect.x = x;
   fontRect.y = y;
-
-  text_color.r = r;
-  text_color.g = g;
-  text_color.b = b;
 
   SDL_BlitSurface(text, NULL, dst, &fontRect);
 

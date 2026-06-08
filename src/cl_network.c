@@ -56,11 +56,14 @@ void cl_read_packets(struct player *p)
   //     servaddr,
   //     &server_addr_size);
 
-   recv(
+  ssize_t received = recv(
       p->cl_socket,
       buf,
       PACKET_SIZE,
       0);
+
+  if (received <= 0)
+    return;
 
   char *header = (char *)malloc(PACKET_HEADER_SIZE);
   memcpy(header, buf, PACKET_HEADER_SIZE);

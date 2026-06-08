@@ -25,6 +25,18 @@ char *build_conn_packet(struct player *p)
   ptr = ptr + USERNAME_MAX_SIZE;
   memcpy(ptr, (char *)p->uuid, 16);
 
+  //////////// x_coord (2)
+  ptr = ptr + 16;
+  *(int16_t *)ptr = p->x_coord;
+
+  //////////// y_coord (2)
+  ptr = ptr + 2;
+  *(int16_t *)ptr = p->y_coord;
+
+  //////////// dimension (1)
+  ptr = ptr + 2;
+  *(uint8_t *)ptr = p->dimension;
+
   return packet;
 }
 
@@ -37,7 +49,7 @@ char *build_position_packet(struct player *p)
   strcpy(ptr, POSITION_PACKET_TAG);
 
   //////////// UUID (16)
-  ptr = ptr + USERNAME_MAX_SIZE;
+  ptr = ptr + PACKET_HEADER_SIZE;
   memcpy(ptr, (char *)p->uuid, 16);
 
   //////////// x_coord
